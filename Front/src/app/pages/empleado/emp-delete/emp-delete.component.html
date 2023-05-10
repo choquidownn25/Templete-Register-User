@@ -1,0 +1,63 @@
+<div mat-dialog-title>
+    <h1>Employee Form Delete</h1>
+</div>
+<form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm" >
+    <div mat-dialog-content class="content">
+   
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput #input class="form-control" placeholder="id" [(ngModel)]="data.id" name="id" required >
+                <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+              </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput #inputstate placeholder="Nombre" [(ngModel)]="data.nombre" name="nombre" maxlength="50"  required>
+                <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+                <mat-hint align="end">{{inputstate.value?.length || 0}}/50</mat-hint>
+
+              </mat-form-field>
+              <mat-form-field color="accent">
+                <input matInput #inputstate class="form-control" placeholder="Apellido" [(ngModel)]="data.apellido" name="apellido" maxlength="50" required >
+                <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+                <mat-hint align="end">{{inputstate.value?.length || 0}}/50</mat-hint>
+      
+              </mat-form-field>
+        </div>
+      
+        
+
+        <div class="row">
+            <mat-form-field appearance="fill">
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker" id="fechaNacimiento"[(ngModel)]="data.fechaNacimiento" name="fechaNacimiento">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+   
+            
+        </div>
+
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput type="number" placeholder="Estado Civil" [(ngModel)]="data.estadocivil" name="estadoCivil">
+                <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+                <mat-hint align="end">{{inputstate.value?.length || 0}}/50</mat-hint>
+              </mat-form-field>
+              <div class="form">
+                <h4>Hermanos</h4><br>
+              </div>
+              <div class="form">
+           
+                <input type="checkbox" id="tieneHermanos" [(ngModel)]="data.tieneHermanos" name="tieneHermanos" value="first_checkbox">    
+              
+              </div>
+        </div>
+      
+    </div>
+    <div mat-dialog-actions class="action">
+        <button type="submit"  color="primary" (click)="confirmAdd()" mat-dialog-close [disabled]="!formControl.valid" mat-button>Agregar</button>
+        <button mat-button color="accent" (click)="onNoClick()" tabindex="-1">Cancel</button>
+    </div>
+</form>

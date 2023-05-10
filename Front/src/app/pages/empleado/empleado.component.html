@@ -1,0 +1,110 @@
+
+
+<div class="card">
+    <div class="header">
+      <h2 class="title">Persona List</h2>
+    </div>
+  
+    <div class="mat-elevation-z8">
+    
+      <div class="form">
+          
+        <mat-form-field floatPlaceholder="never" color="accent">
+          <input matInput type="text" (keyup)="doFilter($event)" placeholder="Filter">
+        </mat-form-field>
+      </div>
+  
+      <table mat-table [dataSource]="personas" matSort>
+    
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.id}}</mat-cell>
+        </ng-container>
+    
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
+        </ng-container>
+    
+        <!-- apellido Column -->
+        <ng-container matColumnDef="apellido">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Apellido </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.apellido}}  </mat-cell>
+        </ng-container>
+    
+        <!-- fechaNacimiento Column -->
+        <ng-container matColumnDef="fechaNacimiento">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Fecha Nacimiento </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.fechaNacimiento}} </mat-cell>
+        </ng-container>
+    
+         <!-- foto Column -->
+         <ng-container matColumnDef="foto">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Foto </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.foto}}  </mat-cell>
+        </ng-container>
+
+         <!-- estadoCivil Column -->
+         <ng-container matColumnDef="estadocivil">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Estado Civil </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.estadocivil}} </mat-cell>
+        </ng-container>
+
+         <!-- estadoCivil Column 
+         <ng-container matColumnDef="tieneHermanod">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Hermanos </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.tieneHermanod}} </mat-cell>
+         </ng-container>-->
+
+         <ng-container matColumnDef="tieneHermanos">
+          <mat-header-cell *matHeaderCellDef> Hermanos 
+          
+          </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <mat-checkbox [(ngModel)]="row.tieneHermanos"
+                          (click)="$event.stopPropagation()"
+                          (change)="$event ? selection.toggle(row) : null"
+                          [checked]="selection.isSelected(row)"
+                          [aria-label]="checkboxLabel(row)">
+            </mat-checkbox>
+          </mat-cell>
+        </ng-container>
+        
+          <!-- actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>
+        <button mat-icon-button color="primary" (click)="addNew()">
+          <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+        </button>
+      </mat-header-cell>
+
+      <mat-cell *matCellDef="let row; let i=index;"> 
+        <button mat-icon-button color="accent" (click)="startDedail(i, row.id, row.nombre, row.apellido, row.fechaNacimiento, row.foto,row.estadocivil, row.tieneHermanos)">
+          <mat-icon aria-label="Detail">menu</mat-icon>
+        </button>
+
+        <!--  startEdit(i: number, id: number, nombre: string, apellido: string, fechaNacimiento: Date, foto: string, estadoCivil: string, tieneHermanod: boolean) { -->
+        <button mat-icon-button color="accent" (click)="startEdit(i, row.id, row.nombre, row.apellido, row.fechaNacimiento, row.foto,row.estadocivil, row.tieneHermanos)">
+          <mat-icon aria-label="Edit">edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="accent" (click)="deleteItem(i, row.id, row.nombre, row.apellido, row.fechaNacimiento, row.foto,row.estadocivil, row.tieneHermanos)">
+          <mat-icon aria-label="Delete">delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    
+        <!-- Row shown when there is no matching data.
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr> -->
+      </table>
+      <mat-paginator [pageSize]="2" [pageSizeOptions]="[2, 4, 6, 10, 20, 100]">
+      </mat-paginator>      
+    </div>
+
+  </div>

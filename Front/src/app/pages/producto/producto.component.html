@@ -1,0 +1,94 @@
+
+ <mat-progress-bar mode="determinate" value="40">
+</mat-progress-bar>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+      <li class="breadcrumb-item active">Producto</li>
+    </ol>
+</nav>
+ 
+
+  <div class="card">
+    <div class="header">
+      <h2 class="title">Producto List</h2>
+    </div>
+  
+    <div class="mat-elevation-z8">
+    
+      <div class="form">
+          
+        <mat-form-field floatPlaceholder="never" color="accent">
+          <input matInput type="text" (keyup)="doFilter($event)" placeholder="Filter">
+        </mat-form-field>
+      </div>
+  
+      <table mat-table [dataSource]="productos" matSort>
+    
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> ID </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.id}}</mat-cell>
+        </ng-container>
+    
+        <!-- Name Column -->
+        <ng-container matColumnDef="nombre">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Nombre </mat-header-cell>
+          <mat-cell *matCellDef="let row">{{row.nombre}}</mat-cell>
+        </ng-container>
+    
+        <!-- Descripcion Column -->
+        <ng-container matColumnDef="descripcion">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Descripcion </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.descripcion}}  </mat-cell>
+        </ng-container>
+    
+        <!-- precio Column -->
+        <ng-container matColumnDef="precio">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Precio </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.precio}} </mat-cell>
+        </ng-container>
+    
+         <!-- precio Column -->
+         <ng-container matColumnDef="cantidad">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Cantidad </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.cantidad}}  </mat-cell>
+        </ng-container>
+
+         <!-- precio Column -->
+         <ng-container matColumnDef="imagen">
+          <mat-header-cell *matHeaderCellDef mat-sort-header> Imagen </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.imagen}} </mat-cell>
+        </ng-container>
+
+          <!-- actions -->
+    <ng-container matColumnDef="actions">
+      <mat-header-cell *matHeaderCellDef>
+        <button mat-icon-button color="primary" (click)="addNew()">
+          <mat-icon aria-label="Example icon-button with a heart icon">add</mat-icon>
+        </button>
+      </mat-header-cell>
+
+      <mat-cell *matCellDef="let row; let i=index;">
+        <button mat-icon-button color="accent" (click)="startEdit(i, row.id, row.nombre, row.descripcion, row.precio, row.cantidad, row.imagen)">
+          <mat-icon aria-label="Edit">edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="accent" (click)="deleteItem(i, row.id, row.nombre, row.descripcion, row.precio, row.cantidad, row.imagen)">
+          <mat-icon aria-label="Delete">delete</mat-icon>
+        </button>
+      </mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    
+        <!-- Row shown when there is no matching data.
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr> -->
+      </table>
+      <mat-paginator [pageSize]="2" [pageSizeOptions]="[2, 4, 6, 10, 20, 100]">
+      </mat-paginator>      
+    </div>
+
+  </div>

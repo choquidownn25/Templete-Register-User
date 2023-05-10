@@ -1,0 +1,76 @@
+
+<div class="container">
+    <h3 mat-dialog-title>Add  Persona</h3>
+  
+    <form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm" >
+      <div class="form">
+        <div class="form">
+          <h4>Escoja imagen</h4><br>
+        </div>
+        <label class="btn btn-secondary" (click)="fileInput.value = null">
+          -
+          <input
+            #fileInput
+            type="file"
+            class="file-input"
+            id="file" 
+            name="file" 
+            (change)="chooseFile(fileInput.files)"
+            multiple
+          />
+        </label>
+
+        <br> 
+      </div>
+          <!--Textarea for demo purposes-->
+      <div class="form">
+        <mat-form-field color="accent">
+          <textarea matInput #input class="form-control" placeholder="Nombre" [(ngModel)]="data.nombre" name="nombre" maxlength="50"  required ></textarea>
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          <mat-hint align="end">{{inputstate.value?.length || 0}}/50</mat-hint>
+        </mat-form-field>
+      </div>
+  
+      <!--Contains mat-hint for characters count and has maxLengt set-->
+      <div class="form">
+        <mat-form-field color="accent">
+          <input matInput #inputstate class="form-control" placeholder="Apellido" [(ngModel)]="data.apellido" name="apellido" maxlength="50" required >
+          <mat-error *ngIf="formControl.invalid">{{getErrorMessage()}}</mat-error>
+          <mat-hint align="end">{{inputstate.value?.length || 0}}/50</mat-hint>
+        </mat-form-field>
+      </div>
+  
+    
+      <div class="form">
+        <label for="css">Fecha Nacimiento</label><br>
+      </div>
+      <div class="form">        
+        <input type="datetime-local" id="fechaNacimiento"[(ngModel)]="data.fechaNacimiento" name="fechaNacimiento">
+      </div>
+
+     
+      <div class="form">
+        <mat-form-field color="accent">
+          <input matInput placeholder="Estado Civil" [(ngModel)]="data.estadoCivil" name="estadoCivil">
+        </mat-form-field>
+      </div>
+      
+      <div class="form">
+        <h4>Hermanos</h4><br>
+      </div>
+      <div class="form">
+   
+        <input type="checkbox" id="tieneHermanod" [(ngModel)]="data.tieneHermanod" name="tieneHermanod" value="first_checkbox">    
+      
+      </div>
+      <div mat-dialog-actions>
+        <button type="submit" (click)="confirmAdd()" mat-dialog-close [disabled]="!formControl.valid" mat-button>Save</button>
+        <button mat-button (click)="onNoClick()" tabindex="-1">Cancel</button>
+      </div>
+
+
+
+     </form>
+      
+  </div>
+  

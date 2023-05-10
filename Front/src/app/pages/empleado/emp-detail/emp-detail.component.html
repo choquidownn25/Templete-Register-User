@@ -1,0 +1,54 @@
+<div mat-dialog-title>
+    <h1>Employee Form Detail</h1>
+</div>
+<form class="mat-dialog-content" (ngSubmit)="submit" #formControl="ngForm" >
+    <div mat-dialog-content class="content">
+  
+        <br>
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput #input class="form-control" placeholder="id" [(ngModel)]="data.id" name="id" required >
+               
+              </mat-form-field>
+        </div>
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput #inputstate placeholder="Nombre" [(ngModel)]="data.nombre" name="nombre" maxlength="50"  required>
+                 
+              </mat-form-field>
+              <mat-form-field color="accent">
+                <input matInput #inputstate class="form-control" placeholder="Apellido" [(ngModel)]="data.apellido" name="apellido" maxlength="50" required >
+                
+              </mat-form-field>
+        </div>
+      
+        
+
+        <div class="row">
+            <mat-form-field appearance="fill">
+                <mat-label>Choose a date</mat-label>
+                <input matInput [matDatepicker]="picker" id="fechaNacimiento"[(ngModel)]="data.fechaNacimiento" name="fechaNacimiento">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+   
+            
+        </div>
+
+        <div class="row">
+            <mat-form-field color="accent">
+                <input matInput type="number" placeholder="Estado Civil" [(ngModel)]="data.estadocivil" name="estadoCivil">
+                </mat-form-field>
+
+              <div class="form">
+                <mat-checkbox id="tieneHermanos" [(ngModel)]="data.tieneHermanos" name="tieneHermanos">Hermanos</mat-checkbox>
+              </div>
+        </div>
+      
+    </div>
+    <div mat-dialog-actions class="action">
+      <button mat-flat-button  color="accent" (click)="print()" tabindex="-1">Print</button>
+      <button mat-button color="accent" (click)="onNoClick()" tabindex="-1">Cancel</button>
+    </div>
+</form>
