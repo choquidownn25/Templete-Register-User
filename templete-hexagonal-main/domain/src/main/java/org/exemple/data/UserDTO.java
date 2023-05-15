@@ -14,7 +14,7 @@ public class UserDTO {
 
 
 	private String password;
-
+	private String resetPasswordToken;
 
 	private Set<String> role;
 

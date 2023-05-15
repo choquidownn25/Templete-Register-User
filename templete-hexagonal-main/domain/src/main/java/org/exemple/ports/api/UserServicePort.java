@@ -7,4 +7,7 @@ import javax.validation.Valid;
 
 public interface UserServicePort {
     UserDTO registerUser(SignupRequest signUpRequest);
+    UserDTO findUserByEmail(String email);
+    UserDTO findUserByResetToken(String resetToken);
+    UserDTO updateResetPasswordToken(String token, String email);
 }

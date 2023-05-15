@@ -10,10 +10,12 @@ import org.exemple.data.UserDTO;
 import org.exemple.data.response.MessageResponse;
 import org.exemple.ports.spi.UserPersistencePort;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 public class UserJpaAdapter implements UserPersistencePort {
@@ -73,4 +75,34 @@ public class UserJpaAdapter implements UserPersistencePort {
         userRepository.save(user);
         return  UserMapper.INSTANCE.userDTOToUser(user);
     }
+
+    @Override
+    public UserDTO findUserByEmail(String email) {
+
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+              return UserMapper.INSTANCE.userDTOToUser(user.get());
+        }
+        return null;
+    }
+
+    @Override
+    public UserDTO findUserByResetToken(String resetToken) {
+        User user = userRepository.findByResetPasswordToken(resetToken);
+        if (user!=null) {
+              return UserMapper.INSTANCE.userDTOToUser(user);
+        }
+        return null;
+    }
+
+    public UserDTO updateResetPasswordToken(String token, String email)  {
+        Optional<User> customer = userRepository.findByEmail(email);
+        if (customer != null || customer.isPresent()) {
+            customer.get().setResetPasswordToken(token);
+            return UserMapper.INSTANCE.userDTOToUser(userRepository.save(customer.get()));
+        } else {
+            throw null;
+        }
+    }
+
 }

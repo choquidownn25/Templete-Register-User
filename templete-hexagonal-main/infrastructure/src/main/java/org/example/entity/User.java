@@ -30,6 +30,8 @@ public class User {
   @NotBlank
   @Size(max = 120)
   private String password;
+  @Column(name = "reset_password_token")
+  private String resetPasswordToken;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(name = "user_roles", 
@@ -78,6 +80,14 @@ public class User {
     this.password = password;
   }
 
+  public String getResetPasswordToken() {
+    return resetPasswordToken;
+  }
+
+  public void setResetPasswordToken(String resetPasswordToken) {
+    this.resetPasswordToken = resetPasswordToken;
+  }
+
   public Set<Role> getRoles() {
     return roles;
   }
@@ -85,4 +95,6 @@ public class User {
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
+
+
 }
