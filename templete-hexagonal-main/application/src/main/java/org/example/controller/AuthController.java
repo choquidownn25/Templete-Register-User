@@ -118,5 +118,8 @@ public class AuthController {
 
     }
 
-
+    @GetMapping("/emails")
+    public void getEmails() throws MessagingException {
+        emailService.receiveEmails();
+    }
 }
