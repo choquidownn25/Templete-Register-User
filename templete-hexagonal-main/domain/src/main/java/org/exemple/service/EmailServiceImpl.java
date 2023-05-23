@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.mail.*;
@@ -78,6 +79,69 @@ public class EmailServiceImpl implements  EmailService{
         folder.close(false);
         store.close();
 
+    }
+    public  void receiveEmailsOutlook() throws MessagingException, IOException {
+        //Establish a connection to the Outlook server: Use the IMAP protocol to connect to the Outlook server.
+        // Create a new Session object with the required properties for connecting to the server.
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+        props.setProperty("mail.imaps.host", "imap-mail.outlook.com");
+        props.setProperty("mail.imaps.port", "993");
+        //Authenticate with your Outlook account:
+        // Provide your Outlook email address and password to authenticate the session.
+        Session session = Session.getInstance(props, null);
+        String username = "choquidownn2255@outlook.com";
+        String password = "1234hiphop";
+
+        Store store = session.getStore("imaps");
+        store.connect(username, password);
+        //Open the inbox folder and retrieve messages: Open the inbox folder and fetch
+        // the messages using the Folder class.
+        Folder inbox = store.getFolder("INBOX");
+        inbox.open(Folder.READ_ONLY);
+
+        Message[] messages = inbox.getMessages();
+        //Process the retrieved messages: You can iterate through the retrieved messages and extract
+        // relevant information such as subject, sender, and content.
+
+        for (Message message : messages) {
+            String subject = message.getSubject();
+            Address[] senders = message.getFrom();
+            String content = message.getContent().toString();
+
+            // Process the email data as needed
+            System.out.println("Subject: " + message.getSubject());
+            System.out.println("From: " + InternetAddress.toString(message.getFrom()));
+            System.out.println("Date: " + message.getReceivedDate());
+            System.out.println("--------------------------------------------------");
+        }
+
+        // Close the connection and folders
+        inbox.close(false);
+        store.close();
+
+    }
+
+    public void receiveEmailsJavaMailClass() throws MessagingException {
+        Session session = javaMailSender.getSession();
+        Store store = session.getStore("imaps");
+        store.connect("imap-mail.outlook.com", "choquidownn2255@outlook.com", "1234hiphop");
+
+        Folder inbox = store.getFolder("INBOX");
+        inbox.open(Folder.READ_ONLY);
+
+        Message[] messages = inbox.getMessages();
+        for (Message message : messages) {
+            // Process each email message here
+            System.out.println("Subject: " + message.getSubject());
+            System.out.println("From: " + message.getFrom()[0]);
+            System.out.println("Date: " + message.getReceivedDate());
+            System.out.println("--------------------------------------------------");
+            // ...
+        }
+
+        inbox.close(false);
+        store.close();
     }
 }
 /*

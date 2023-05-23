@@ -36,6 +36,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -119,7 +120,9 @@ public class AuthController {
     }
 
     @GetMapping("/emails")
-    public void getEmails() throws MessagingException {
-        emailService.receiveEmails();
+    public void getEmails() throws MessagingException, IOException {
+        emailService.receiveEmailsJavaMailClass();
+        //emailService.receiveEmailsOutlook();
+        //emailService.receiveEmails();
     }
 }
