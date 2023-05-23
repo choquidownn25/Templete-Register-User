@@ -144,6 +144,10 @@ public class EmailServiceImpl implements  EmailService{
         store.close();
     }
 }
+//Email
+// 2222255555@outlook.com
+//1234hiphop
+
 /*
 JavaMailSender
 JavaMailSenderImpl
