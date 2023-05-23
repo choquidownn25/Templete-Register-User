@@ -80,3 +80,11 @@ public class EmailServiceImpl implements  EmailService{
 
     }
 }
+/*
+JavaMailSender
+JavaMailSenderImpl
+  nested exception is:
+	javax.net.ssl.SSLHandshakeException: No appropriate protocol (protocol is disabled or cipher suites are inappropriate)] with root cause
+
+javax.net.ssl.SSLHandshakeException: No appropriate protocol (protocol is disabled or cipher suites are inappropriate)
+ */
