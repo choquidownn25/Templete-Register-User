@@ -8,6 +8,7 @@ import org.example.security.services.UserDetailsImpl;
 import org.exemple.data.Mail;
 import org.exemple.data.UserDTO;
 import org.exemple.data.request.*;
+import org.exemple.data.response.EmailDTOResponse;
 import org.exemple.data.response.JwtResponse;
 import org.exemple.data.response.PasswordResetTokenResponse;
 import org.exemple.ports.api.UserServicePort;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
@@ -40,6 +42,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -121,8 +125,21 @@ public class AuthController {
 
     @GetMapping("/emails")
     public void getEmails() throws MessagingException, IOException {
-        emailService.receiveEmailsJavaMailClass();
         //emailService.receiveEmailsOutlook();
-        //emailService.receiveEmails();
+        //emailService.receiveEmailsOutlook(); receiveEmails
+        emailService.receiveEmails();
+    }
+    @GetMapping("/listEmails")
+    public List<String> listEmails() throws MessagingException, IOException {
+        //emailService.receiveEmailsOutlook();
+        //emailService.receiveEmailsOutlook(); receiveEmails
+        Stream<String> s = Stream.of(String.valueOf(emailService.listReceiveEmails().stream().collect(Collectors.toList())));
+        //return emailService.listReceiveEmails().stream().collect(Collectors.toList());
+        List<String> myList = s.collect(Collectors.toList());
+        return myList;
+    }
+    @GetMapping("/listEmailsIMCP")
+    public List<EmailDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
+        return emailService.receiveEmailsIMCP();
     }
 }

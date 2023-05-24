@@ -8,12 +8,12 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @ToString
-public class EmailDTORespopnse {
+public class EmailDTOResponse {
     private String subject;
     private Address[] from;
     private String dni;
     private String company;
-    private String phone;
+    //private String phone;
     private String contend;
     private Date receivedDate;
 
