@@ -211,7 +211,7 @@ public class EmailServiceImpl implements  EmailService{
             emailInfo.setContend(body);
 
             String strDNI = body;
-            String[] arrOfStrDNI = strDNI.split("Nombre:\\r\\nDNI:\\r\\nEmpresa:E-sing\\r\\nCelular:\\r\\n,+", 83);
+            String[] arrOfStrDNI = strDNI.split("Nombre:\\r\\nDNI:\\r\\nEmpresa:E-sing\\r\\nCelular:\\r\\n,+", 76);
             System.out.println("Muestra Nombre a mostrar :" + arrOfStrDNI[0].substring(8,28).toString());
             emailInfo.setCompany(arrOfStrDNI[0].substring(8,27).toString());
             emailInfo.setDni(arrOfStrDNI[0].substring(34,41).toString());
@@ -226,6 +226,82 @@ public class EmailServiceImpl implements  EmailService{
         return infoEmail;
     }
 
+    public List<EmailDTOResponse> receiveEmailsHTML() throws MessagingException, IOException{
+        List<EmailDTOResponse> infoEmail = new ArrayList<>();
+        EmailDTOResponse emailInfo = new EmailDTOResponse();
+
+
+        Properties properties = new Properties();
+        properties.put("mail.store.protocol", "imaps");
+
+        Session session = Session.getDefaultInstance(properties, null);
+        Store store = session.getStore("imaps");
+        store.connect(mailProperties.getHost(), mailProperties.getUsername(), mailProperties.getPassword());
+
+        Folder folder = store.getFolder("INBOX");
+        folder.open(Folder.READ_WRITE);
+
+        FlagTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.RECENT), false);
+        Message[] messages = folder.search(flagTerm);
+
+        for (Message message : messages) {
+            // Process the email message
+            System.out.println("Subject: " + message.getSubject());
+            emailInfo.setSubject(message.getSubject());
+            System.out.println("From: " + InternetAddress.toString(message.getFrom()));
+            Address[] address =message.getFrom();
+            emailInfo.setFrom(address);
+            String body = ((MimeMultipart) message.getContent()).getBodyPart(0).getContent().toString();
+            System.out.println("Contenido: " + body);
+            emailInfo.setContend(body);
+
+            String strDNI = body;
+
+
+            // Patrones de expresiones regulares para buscar el nombre, DNI y número de teléfono
+            String patronNombre = "Nombre: (.+)";
+            String patronDNI = "DNI: (.+)";
+            String patronTelefono = "Celular: (.+)";
+
+            // Crear los objetos Pattern y Matcher
+            Pattern patternNombre = Pattern.compile(patronNombre);
+            Pattern patternDNI = Pattern.compile(patronDNI);
+            Pattern patternTelefono = Pattern.compile(patronTelefono);
+
+            Matcher matcherNombre = patternNombre.matcher(body);
+            Matcher matcherDNI = patternDNI.matcher(body);
+            Matcher matcherTelefono = patternTelefono.matcher(body);
+
+            // Buscar la información del usuario
+            String nombre = obtenerInformacion(matcherNombre);
+            String dni = obtenerInformacion(matcherDNI);
+            String telefono = obtenerInformacion(matcherTelefono);
+
+            // Imprimir la información encontrada
+            System.out.println("Nombre: " + nombre);
+            System.out.println("DNI: " + dni);
+            System.out.println("Teléfono: " + telefono);
+
+            emailInfo.setCompany(nombre);
+            emailInfo.setDni(dni);
+            emailInfo.setPhone(telefono);
+            System.out.println("Date: " + message.getReceivedDate());
+            emailInfo.setReceivedDate(message.getReceivedDate());
+            System.out.println("--------------------------------------------------");
+            infoEmail.add(emailInfo);
+        }
+
+        folder.close(false);
+        store.close();
+        return infoEmail;
+    }
+    // Método auxiliar para obtener la información coincidente del Matcher
+    private static String obtenerInformacion(Matcher matcher) {
+        if (matcher.find()) {
+            return matcher.group(1).trim();
+        }
+        return "";
+    }
 }
 
 

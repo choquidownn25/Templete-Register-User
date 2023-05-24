@@ -140,6 +140,7 @@ public class AuthController {
     }
     @GetMapping("/listEmailsIMCP")
     public List<EmailDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
-        return emailService.receiveEmailsIMCP();
+        //return emailService.receiveEmailsIMCP();
+        return emailService.receiveEmailsHTML();
     }
 }

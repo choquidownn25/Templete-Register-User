@@ -13,7 +13,7 @@ public class EmailDTOResponse {
     private Address[] from;
     private String dni;
     private String company;
-    //private String phone;
+    private String phone;
     private String contend;
     private Date receivedDate;
 
