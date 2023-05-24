@@ -8,6 +8,7 @@ import org.example.security.services.UserDetailsImpl;
 import org.exemple.data.Mail;
 import org.exemple.data.UserDTO;
 import org.exemple.data.request.*;
+import org.exemple.data.response.BancoOrigenDTOResponse;
 import org.exemple.data.response.EmailDTOResponse;
 import org.exemple.data.response.JwtResponse;
 import org.exemple.data.response.PasswordResetTokenResponse;
@@ -139,8 +140,9 @@ public class AuthController {
         return myList;
     }
     @GetMapping("/listEmailsIMCP")
-    public List<EmailDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
+    public List<BancoOrigenDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
         //return emailService.receiveEmailsIMCP();
-        return emailService.receiveEmailsHTML();
+        //return emailService.receiveEmailsHTML();
+        return emailService.receiveEmailsHTMLBanco();
     }
 }

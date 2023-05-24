@@ -1,6 +1,7 @@
 package org.exemple.service;
 
 import org.exemple.data.Mail;
+import org.exemple.data.response.BancoOrigenDTOResponse;
 import org.exemple.data.response.EmailDTOResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -241,7 +242,7 @@ public class EmailServiceImpl implements  EmailService{
         Folder folder = store.getFolder("INBOX");
         folder.open(Folder.READ_WRITE);
 
-        FlagTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.RECENT), false);
+        FlagTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.DELETED), false);
         Message[] messages = folder.search(flagTerm);
 
         for (Message message : messages) {
@@ -295,10 +296,93 @@ public class EmailServiceImpl implements  EmailService{
         store.close();
         return infoEmail;
     }
+
+
+    public List<BancoOrigenDTOResponse> receiveEmailsHTMLBanco() throws MessagingException, IOException{
+        List<BancoOrigenDTOResponse> infoEmail = new ArrayList<>();
+        BancoOrigenDTOResponse emailInfo = new BancoOrigenDTOResponse();
+
+
+        Properties properties = new Properties();
+        properties.put("mail.store.protocol", "imaps");
+
+        Session session = Session.getDefaultInstance(properties, null);
+        Store store = session.getStore("imaps");
+        store.connect(mailProperties.getHost(), mailProperties.getUsername(), mailProperties.getPassword());
+
+        Folder folder = store.getFolder("INBOX");
+        folder.open(Folder.READ_WRITE);
+
+        FlagTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.DELETED), false);
+        Message[] messages = folder.search(flagTerm);
+
+        for (Message message : messages) {
+            // Process the email message
+            System.out.println("Subject: " + message.getSubject());
+            emailInfo.setSubject(message.getSubject());
+            System.out.println("From: " + InternetAddress.toString(message.getFrom()));
+            Address[] address =message.getFrom();
+            emailInfo.setFrom(address);
+            String body = ((MimeMultipart) message.getContent()).getBodyPart(0).getContent().toString();
+            System.out.println("Contenido: " + body);
+            emailInfo.setContend(body);
+
+            String strDNI = body;
+
+            // Patrones de expresiones regulares para buscar el nombre, DNI y número de teléfono
+            String bancoOrigen = extractBancoOrigen(body);
+            String montoRecibido = extractMontoRecibido(body);
+            String numeroComprobante = extractNumeroComprobante(body);
+
+
+            System.out.println("Banco de origen: " + bancoOrigen);
+            System.out.println("Monto recibido: " + montoRecibido);
+            System.out.println("Número de comprobante: " + numeroComprobante);
+
+            emailInfo.setBancoOrigen(bancoOrigen);
+            emailInfo.setMontoRecibido(montoRecibido);
+            emailInfo.setNumeroComprobante(numeroComprobante);
+            System.out.println("Date: " + message.getReceivedDate());
+            emailInfo.setReceivedDate(message.getReceivedDate());
+            System.out.println("--------------------------------------------------");
+            infoEmail.add(emailInfo);
+        }
+
+        folder.close(false);
+        store.close();
+        return infoEmail;
+    }
+
     // Método auxiliar para obtener la información coincidente del Matcher
     private static String obtenerInformacion(Matcher matcher) {
         if (matcher.find()) {
             return matcher.group(1).trim();
+        }
+        return "";
+    }
+    private static String extractBancoOrigen(String texto) {
+        Pattern pattern = Pattern.compile("Banco de origen\\r\\n(.+?)\\r\\n");
+        Matcher matcher = pattern.matcher(texto);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "";
+    }
+
+    private static String extractMontoRecibido(String texto) {
+        Pattern pattern = Pattern.compile("Monto recibido\\r\\n(.+?)\\r\\n");
+        Matcher matcher = pattern.matcher(texto);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "";
+    }
+
+    private static String extractNumeroComprobante(String texto) {
+        Pattern pattern = Pattern.compile("Número de comprobante\\r\\n(.+?)\\r\\n");
+        Matcher matcher = pattern.matcher(texto);
+        if (matcher.find()) {
+            return matcher.group(1);
         }
         return "";
     }
