@@ -13,12 +13,12 @@ import java.util.Date;
 public class BancoOrigenDTOResponse {
     private String subject;
     private Address[] from;
-
+    private String nombreCliente;
     private String bancoOrigen;
     private String montoRecibido;
     private String numeroComprobante;
 
-    private String contend;
+    //private String contend;
     private Date receivedDate;
 
 

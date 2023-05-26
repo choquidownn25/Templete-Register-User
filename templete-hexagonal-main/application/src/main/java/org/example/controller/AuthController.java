@@ -124,21 +124,7 @@ public class AuthController {
 
     }
 
-    @GetMapping("/emails")
-    public void getEmails() throws MessagingException, IOException {
-        //emailService.receiveEmailsOutlook();
-        //emailService.receiveEmailsOutlook(); receiveEmails
-        emailService.receiveEmails();
-    }
-    @GetMapping("/listEmails")
-    public List<String> listEmails() throws MessagingException, IOException {
-        //emailService.receiveEmailsOutlook();
-        //emailService.receiveEmailsOutlook(); receiveEmails
-        Stream<String> s = Stream.of(String.valueOf(emailService.listReceiveEmails().stream().collect(Collectors.toList())));
-        //return emailService.listReceiveEmails().stream().collect(Collectors.toList());
-        List<String> myList = s.collect(Collectors.toList());
-        return myList;
-    }
+
     @GetMapping("/listEmailsIMCP")
     public List<BancoOrigenDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
         //return emailService.receiveEmailsIMCP();
