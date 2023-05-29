@@ -119,10 +119,12 @@ public class AuthController {
         BancoOrigenDTOResponse bancoOrigenDTOResponse = new BancoOrigenDTOResponse();
         List<BancoOrigenDTO> bancoOrigenDTO = emailService.receiveEmailsHTMLBanco(nameBanco);
         if(bancoOrigenDTO.size()>0){
-            bancoOrigenDTOResponse.setListBancoOrigenDTOs(bancoOrigenDTO);
+
             Message message = new Message();
             message.setCode(200);
             message.setEcho("Success connection ");
+            bancoOrigenDTOResponse.setListBancoOrigenDTOs(bancoOrigenDTO);
+            bancoOrigenDTOResponse.setMessage(message);
             return bancoOrigenDTOResponse;
         }
 

@@ -140,17 +140,24 @@ public class EmailServiceImpl implements  EmailService{
         store.close();
         escritura.close();
 
-        List<BancoOrigenDTO> bancoOrigenDTOList = new ArrayList<>();
+        // Agrega los elementos de la lista de cadenas
 
-        for (String str : infoEmails) {
-            BancoOrigenDTO dto = convertirStringABancoOrigenDTO(str);
-            dto.setFrom(emailInfo.getFrom());
-            System.out.println("email : " + emailInfo.getFrom());
-            dto.setReceivedDate(emailInfo.getReceivedDate());
-            System.out.println("Fecha : " + emailInfo.getReceivedDate());
-            bancoOrigenDTOList.add(dto);
-        }
-
+        List<BancoOrigenDTO> bancoOrigenDTOList = infoEmails.stream()
+                .map(str -> {
+                    String[] data = str.split(","); // Suponiendo que los elementos de la lista de cadenas están separados por comas
+                    BancoOrigenDTO bancoOrigenDTO = new BancoOrigenDTO();
+                    bancoOrigenDTO.setSubject(data[0]);
+                    bancoOrigenDTO.setFrom(emailInfo.getFrom());
+                    bancoOrigenDTO.setNombreCliente(data[2]);
+                    bancoOrigenDTO.setBancoOrigen(data[3]);
+                    bancoOrigenDTO.setMontoRecibido(data[4]);
+                    bancoOrigenDTO.setNumeroComprobante(data[5]);
+                    // bancoOrigenDTO.setContend(data[6]); // Si deseas descomentar esta línea, asegúrate de tener el setter correspondiente en la clase BancoOrigenDTO
+                    bancoOrigenDTO.setReceivedDate(emailInfo.getReceivedDate());
+                    return bancoOrigenDTO;
+                })
+                .collect(Collectors.toList());
+        //List<BancoOrigenDTO> bancoOrigenDTOList = new ArrayList<>();
 
         //return bancoOrigenDTOList.stream().filter(x->x.getBancoOrigen()==nameBanco).collect(Collectors.toList());
         return bancoOrigenDTOList;
