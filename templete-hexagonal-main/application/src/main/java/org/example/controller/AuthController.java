@@ -5,46 +5,33 @@ import net.bytebuddy.utility.RandomString;
 import org.example.security.jwt.JwtTokenUtil;
 import org.example.security.jwt.JwtUtils;
 import org.example.security.services.UserDetailsImpl;
+import org.exemple.data.BancoOrigenDTO;
 import org.exemple.data.Mail;
-import org.exemple.data.UserDTO;
 import org.exemple.data.request.*;
 import org.exemple.data.response.BancoOrigenDTOResponse;
-import org.exemple.data.response.EmailDTOResponse;
 import org.exemple.data.response.JwtResponse;
-import org.exemple.data.response.PasswordResetTokenResponse;
+import org.exemple.data.response.Message;
 import org.exemple.ports.api.UserServicePort;
-import org.exemple.service.EmailService;
 import org.exemple.service.EmailServiceImpl;
-import org.exemple.utils.CustomerNotFoundException;
 import org.exemple.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -125,10 +112,28 @@ public class AuthController {
     }
 
 
-    @GetMapping("/listEmailsIMCP")
-    public List<BancoOrigenDTOResponse> receiveEmailsIMCP() throws MessagingException, IOException {
+    @GetMapping("/listEmailsIMCP/{nameBanco}")
+    public BancoOrigenDTOResponse receiveEmailsIMCP(@PathVariable String nameBanco) throws MessagingException, IOException {
         //return emailService.receiveEmailsIMCP();
         //return emailService.receiveEmailsHTML();
-        return emailService.receiveEmailsHTMLBanco();
+        BancoOrigenDTOResponse bancoOrigenDTOResponse = new BancoOrigenDTOResponse();
+        List<BancoOrigenDTO> bancoOrigenDTO = emailService.receiveEmailsHTMLBanco(nameBanco);
+        if(bancoOrigenDTO.size()>0){
+            bancoOrigenDTOResponse.setListBancoOrigenDTOs(bancoOrigenDTO);
+            Message message = new Message();
+            message.setCode(200);
+            message.setEcho("Success connection ");
+            return bancoOrigenDTOResponse;
+        }
+
+        else{
+            Message message = new Message();
+            message.setCode(10);
+            message.setEcho("Error Internet connection ");
+            bancoOrigenDTOResponse.setMessage(message);
+            return bancoOrigenDTOResponse;
+        }
+
     }
+
 }

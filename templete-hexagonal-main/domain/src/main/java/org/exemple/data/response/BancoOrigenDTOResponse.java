@@ -1,9 +1,11 @@
 package org.exemple.data.response;
 
 import lombok.*;
+import org.exemple.data.BancoOrigenDTO;
 
 import javax.mail.Address;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -11,15 +13,6 @@ import java.util.Date;
 @Builder
 @ToString
 public class BancoOrigenDTOResponse {
-    private String subject;
-    private Address[] from;
-    private String nombreCliente;
-    private String bancoOrigen;
-    private String montoRecibido;
-    private String numeroComprobante;
-
-    //private String contend;
-    private Date receivedDate;
-
-
+    private  List<BancoOrigenDTO> listBancoOrigenDTOs;
+    private Message message;
 }

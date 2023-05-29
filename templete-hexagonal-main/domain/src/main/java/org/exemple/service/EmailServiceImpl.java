@@ -1,34 +1,32 @@
 package org.exemple.service;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.exemple.data.BancoOrigenDTO;
 import org.exemple.data.Mail;
 import org.exemple.data.response.BancoOrigenDTOResponse;
-import org.exemple.data.response.EmailDTOResponse;
+import org.exemple.utils.Extact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-
+import com.fasterxml.jackson.core.type.TypeReference;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Store;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import java.util.stream.Collectors;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
@@ -36,6 +34,9 @@ import javax.mail.search.FlagTerm;
 
 @Component
 public class EmailServiceImpl implements  EmailService{
+    List<BancoOrigenDTO> infoEmail = new ArrayList<>();
+    BancoOrigenDTO emailInfo = new BancoOrigenDTO();
+    Extact extact = new Extact();
     @Autowired
     private JavaMailSender javaMailSender;
     @Autowired
@@ -43,7 +44,7 @@ public class EmailServiceImpl implements  EmailService{
 
     @Autowired
     private  MailProperties mailProperties;
-
+    private ObjectMapper mapper = new ObjectMapper();
     public void sendEmail(Mail mail)
     {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -59,11 +60,14 @@ public class EmailServiceImpl implements  EmailService{
             e.printStackTrace();
         }
     }
-    public List<BancoOrigenDTOResponse> receiveEmailsHTMLBanco() throws MessagingException, IOException{
-        List<BancoOrigenDTOResponse> infoEmail = new ArrayList<>();
-        BancoOrigenDTOResponse emailInfo = new BancoOrigenDTOResponse();
-
-
+    public List<BancoOrigenDTO> receiveEmailsHTMLBanco(String nameBanco) throws MessagingException, IOException{
+        List<String> infoEmails = new ArrayList<>();
+        BancoOrigenDTO emailInf = new BancoOrigenDTO();
+        //Declaring reference of File class
+        File file = null;
+        //Declaring reference of FileOutputStream class
+        FileOutputStream fileOutStream = null;
+        String bancoOrigen = null;
         Properties properties = new Properties();
         properties.put("mail.store.protocol", "imaps");
 
@@ -76,26 +80,37 @@ public class EmailServiceImpl implements  EmailService{
 
         FlagTerm flagTerm = new FlagTerm(new Flags(Flags.Flag.RECENT), false);
         Message[] messages = folder.search(flagTerm);
-
+        file = new File("C:/E-sing/FileRestEmail.txt");
+        FileWriter fileWriter = new FileWriter(file);
+        BufferedWriter escritura = new BufferedWriter(fileWriter);
+        //Creating Object of FileOutputStream class
+        fileOutStream = new FileOutputStream(file);
         for (Message message : messages) {
+            //In case file does not exists, Create the file
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             // Process the email message
             System.out.println("Subject: " + message.getSubject());
             emailInfo.setSubject(message.getSubject());
             System.out.println("From: " + InternetAddress.toString(message.getFrom()));
             Address[] address =message.getFrom();
-            System.out.println("Email : " + message.getFrom());
+            String sender = message.getFrom()[0].toString();
+            System.out.println("Contenido: " + sender);
             emailInfo.setFrom(address);
             String body = ((MimeMultipart) message.getContent()).getBodyPart(0).getContent().toString();
             System.out.println("Contenido: " + body);
+
+
             //emailInfo.setContend(body);
 
             String strDNI = body;
 
             // Patrones de expresiones regulares para buscar el nombre, DNI y número de teléfono
-            String bancoOrigen = extractBancoOrigen(body);
-            String montoRecibido = extractMontoRecibido(body);
-            String nombreCliente = extractNombreCliente(body);
-            String numeroComprobante = extractNumeroComprobante(body);
+            bancoOrigen = extact.extractBancoOrigen(body);
+            String montoRecibido = extact.extractMontoRecibido(body);
+            String nombreCliente = extact.extractNombreCliente(body);
+            String numeroComprobante = extact.extractNumeroComprobante(body);
 
 
             System.out.println("Banco de origen: " + bancoOrigen);
@@ -110,114 +125,67 @@ public class EmailServiceImpl implements  EmailService{
             System.out.println("Date: " + message.getReceivedDate());
             emailInfo.setReceivedDate(message.getReceivedDate());
             System.out.println("--------------------------------------------------");
+            //fetching the bytes from data String
+            infoEmails.add(String.valueOf(emailInfo));
             infoEmail.add(emailInfo);
+            for(int i=0;i<infoEmail.size();i++){
+                escritura.write(String.valueOf(infoEmail.get(i)));
+                escritura.newLine();
+
+            }
+
         }
 
         folder.close(false);
         store.close();
-        return infoEmail;
+        escritura.close();
+
+        List<BancoOrigenDTO> bancoOrigenDTOList = new ArrayList<>();
+
+        for (String str : infoEmails) {
+            BancoOrigenDTO dto = convertirStringABancoOrigenDTO(str);
+            dto.setFrom(emailInfo.getFrom());
+            System.out.println("email : " + emailInfo.getFrom());
+            dto.setReceivedDate(emailInfo.getReceivedDate());
+            System.out.println("Fecha : " + emailInfo.getReceivedDate());
+            bancoOrigenDTOList.add(dto);
+        }
+
+
+        //return bancoOrigenDTOList.stream().filter(x->x.getBancoOrigen()==nameBanco).collect(Collectors.toList());
+        return bancoOrigenDTOList;
     }
 
-    // Método auxiliar para obtener la información coincidente del Matcher
-    private static String obtenerInformacion(Matcher matcher) {
-        if (matcher.find()) {
-            return matcher.group(1).trim();
-        }
-        return "";
-    }
-    private static String extractBancoOrigen(String texto) {
-        Pattern pattern = Pattern.compile("Banco de origen\\r\\n(.+?)\\r\\n");
-        Matcher matcher = pattern.matcher(texto);
-        Pattern patternBancoDestino = Pattern.compile("Banco de destino\\r\\n(.+?)\\r\\n");
-        Matcher matcherBancoDestino = patternBancoDestino.matcher(texto);
 
-        Pattern patternBancoDestinoUpper = Pattern.compile("Banco Destino:\\\\s*([\\\\w\\\\s-]+)");
-        Matcher matcherBancoDestinoUpper = patternBancoDestinoUpper.matcher(texto);
 
-        Pattern patternBanco = Pattern.compile("Banco\\s*:\\s*([^\\n]+)");
-        Matcher matcherBanco = patternBanco.matcher(texto);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        if(matcherBancoDestino.find()){
-            return matcherBancoDestino.group(1);
-        }
-        if(matcherBancoDestinoUpper.find()){
-            return matcherBancoDestinoUpper.group(1);
-        }
-        if(matcherBanco.find()){
-            return matcherBanco.group(1);
-        }
-        return "";
+
+    private static BancoOrigenDTO convertirStringABancoOrigenDTO(String str) {
+        String[] partes = str.split(","); // Asume que los campos están separados por comas
+
+        String subject = partes[0];
+        String[] from = partes[1].split(";"); // Asume que la dirección tiene componentes separados por punto y coma
+        String nombreCliente = partes[2];
+        String bancoOrigen = partes[3];
+        String montoRecibido = partes[4];
+        String numeroComprobante = partes[5];
+        Date receivedDate = obtenerFecha(partes[6]); // Implementa obtenerFecha() para convertir el string a una instancia de Date
+
+        BancoOrigenDTO dto = new BancoOrigenDTO();
+        dto.setSubject(subject);
+        //dto.setFrom(from);
+        dto.setNombreCliente(nombreCliente);
+        dto.setBancoOrigen(bancoOrigen);
+        dto.setMontoRecibido(montoRecibido);
+        dto.setNumeroComprobante(numeroComprobante);
+        dto.setReceivedDate(receivedDate);
+
+        return dto;
     }
 
-    private static String extractMontoRecibido(String texto) {
-        Pattern pattern = Pattern.compile("Monto recibido\\r\\n(.+?)\\r\\n");
-        Matcher matcher = pattern.matcher(texto);
-
-        Pattern patternMontoOperacion = Pattern.compile("Monto de la Operacion\\r\\n(.+?)\\r\\n");
-        Matcher matcherMontoOperacion = patternMontoOperacion.matcher(texto);
-        Pattern patternMonto = Pattern.compile("Monto\\r\\n(.+?)\\r\\n");
-        Matcher matcherMonto = patternMonto.matcher(texto);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        if (matcherMontoOperacion.find()) {
-            return matcher.group(1);
-        }
-        if (matcherMonto.find()) {
-            return matcherMonto.group(1);
-        }
-        return "";
-    }
-    private static String extractNombreCliente(String texto) {
-        Pattern pattern = Pattern.compile("Has recibido una transferencia de fondos de \\r\\n(.+?)\\r\\n");
-        Matcher matcher = pattern.matcher(texto);
-
-        Pattern patternNombreCliente = Pattern.compile(", nuestro cliente \\r\\n(.+?)\\r\\n");
-        Matcher matcherNombreCliente = patternNombreCliente.matcher(texto);
-
-        Pattern patternNombre = Pattern.compile("Nombre: (.+)");
-        Matcher matcherNombre = patternNombre.matcher(texto);
-
-        Pattern patternNombreCuenta = Pattern.compile("Nombre Cuenta: (.+)");
-        Matcher matcherNombreCuenta = patternNombreCuenta.matcher(texto);
-        Pattern patternNombreClienteCuenta = Pattern.compile("Nombre Cuenta: (.+)");
-        Matcher matcherNombreClienteCuenta = patternNombreClienteCuenta.matcher(texto);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        if(matcherNombreCliente.find()){
-            return matcherNombreCliente.group(1);
-        }
-        if(matcherNombre.find()){
-            return matcherNombre.group(1);
-        }
-        if(matcherNombreCuenta.find()){
-            return matcherNombreCuenta.group(1);
-        }
-        if(matcherNombreClienteCuenta.find()){
-            return matcherNombreClienteCuenta.group(1);
-        }
-        return "";
-    }
-    private static String extractNumeroComprobante(String texto) {
-        Pattern pattern = Pattern.compile("Número de comprobante\\r\\n(.+?)\\r\\n");
-        Matcher matcher = pattern.matcher(texto);
-        Pattern patternNumeroCuenta = Pattern.compile("Numero Cuenta\\r\\n(.+?)\\r\\n");
-        Matcher matcherNumeroCuenta = patternNumeroCuenta.matcher(texto);
-        Pattern patternNumeroCuentaBancaria = Pattern.compile("Numero Cuenta\\r\\n(.+?)\\r\\n");
-        Matcher matcherNumeroCuentaBancaria = patternNumeroCuentaBancaria.matcher(texto);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        if (matcherNumeroCuenta.find()) {
-            return matcherNumeroCuenta.group(1);
-        }
-        if (matcherNumeroCuentaBancaria.find()) {
-            return matcherNumeroCuentaBancaria.group(1);
-        }
-        return "";
+    private static Date obtenerFecha(String str) {
+        // Implementa la lógica para convertir el string a una instancia de Date
+        // Puedes utilizar SimpleDateFormat u otras clases de Java para esto
+        return null;
     }
 }
 
