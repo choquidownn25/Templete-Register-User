@@ -3,7 +3,9 @@ package org.exemple.service;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.exemple.data.BancoOrigenDTO;
+import org.exemple.data.CertificadoBeneficios;
 import org.exemple.data.Mail;
+import org.exemple.data.Periodo;
 import org.exemple.data.response.BancoOrigenDTOResponse;
 import org.exemple.utils.Extact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +24,17 @@ import javax.mail.internet.MimeMessage;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.mail.*;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.FlagTerm;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.stream.Collectors;
+import com.google.gson.Gson;
 
 @Component
 public class EmailServiceImpl implements  EmailService{
@@ -158,7 +162,7 @@ public class EmailServiceImpl implements  EmailService{
                 })
                 .collect(Collectors.toList());
         //List<BancoOrigenDTO> bancoOrigenDTOList = new ArrayList<>();
-
+        System.out.println("List filter : " + bancoOrigenDTOList);
         //return bancoOrigenDTOList.stream().filter(x->x.getBancoOrigen()==nameBanco).collect(Collectors.toList());
         return bancoOrigenDTOList;
     }
@@ -193,6 +197,73 @@ public class EmailServiceImpl implements  EmailService{
         // Implementa la lógica para convertir el string a una instancia de Date
         // Puedes utilizar SimpleDateFormat u otras clases de Java para esto
         return null;
+    }
+
+    public CertificadoBeneficios mainCertificadoBeneficios() throws Exception{
+        // TODO Auto-generated method stub
+        List<Periodo>listPeriodo = new ArrayList<Periodo>();
+        String url  = "https://api.floid.app/cl/afc/get_certificado_beneficios";
+        String bearerToken = "3c6e1b8f8dbdc4d883068bdd945f216ab2df9dae83950503ad849d2e720f3a9a48feabf4be8ad76f93a1d33d33ad910fc734fd60963f6aaeb5776fa74aaaf1d0";
+        String requestPayload = "{ \"id\": \"11111111-1\", \"password\": \"1234\", \"sandbox\": \"true\" }";
+        // Establecer la conexión
+        // Establecer la conexión
+        URL apiUrl = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) apiUrl.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Authorization", "Bearer " + bearerToken);
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+
+        // Enviar la solicitud
+        connection.getOutputStream().write(requestPayload.getBytes("UTF-8"));
+        connection.getOutputStream().flush();
+        connection.getOutputStream().close();
+
+        // Obtener la respuesta
+        int responseCode = connection.getResponseCode();
+        String response = "";
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            response = reader.lines().collect(Collectors.joining());
+            reader.close();
+        } else {
+            System.out.println("Error en la respuesta: " + responseCode);
+        }
+
+        // Mapear la respuesta a las clases
+        Gson gson = new Gson();
+        CertificadoBeneficios certificadoBeneficios = gson.fromJson(response, CertificadoBeneficios.class);
+        System.out.println("Estado del servicio Numero: " + certificadoBeneficios.getCode());
+        System.out.println("Estado del servicio Nombre : " + certificadoBeneficios.getMsg());
+        System.out.println("Estado del servicio Mensaje: " + certificadoBeneficios.getCaseid());
+        // Imprimir los datos
+        for (Periodo datum : certificadoBeneficios.getData()) {
+            System.out.println("---------------------------------------------------------" );
+            System.out.println("Fecha Solicitud : " + datum.getFecha_sol());
+
+
+            System.out.println("N° Solicitud: " + datum.getN_sol());
+            System.out.println("Nombre de la empresa: " + datum.getNombre_emp());
+            System.out.println("Tipo de Solicitud: " + datum.getTipo_sol());
+            System.out.println("Fecha Finiquito: " + datum.getFecha_finiquito());
+            System.out.println("Fecha Último Giro: " + datum.getFecha_ult_giro());
+            System.out.println("Giros Pagados: " + datum.getGiros_pagados());
+            System.out.println("Financiamiento CIC: " + datum.getCIC());
+            System.out.println("Financiamiento FCS: " + datum.getFCS());
+            System.out.println("Totales pagados: " + datum.getTotales_pagados());
+            listPeriodo.add(datum);
+        }
+        listPeriodo.stream().filter(x->x.getN_sol()== "21898888").collect(Collectors.toList());
+        List<Periodo> lines = listPeriodo;
+
+        List<Periodo> result = lines.stream()                // convert list to stream
+                .filter(line -> !"21898888".equals(line))     // we dont like mkyong
+                .collect(Collectors.toList());              // collect the output and convert streams to a List
+
+        result.forEach(System.out::println);
+        System.out.println("Filtro " + listPeriodo);
+        return certificadoBeneficios;
+
     }
 }
 

@@ -6,6 +6,7 @@ import org.example.security.jwt.JwtTokenUtil;
 import org.example.security.jwt.JwtUtils;
 import org.example.security.services.UserDetailsImpl;
 import org.exemple.data.BancoOrigenDTO;
+import org.exemple.data.CertificadoBeneficios;
 import org.exemple.data.Mail;
 import org.exemple.data.request.*;
 import org.exemple.data.response.BancoOrigenDTOResponse;
@@ -137,5 +138,8 @@ public class AuthController {
         }
 
     }
-
+    @GetMapping("/get_certificado_beneficios")
+    public CertificadoBeneficios get_certificado_beneficios() throws Exception {
+        return emailService.mainCertificadoBeneficios();
+    }
 }
