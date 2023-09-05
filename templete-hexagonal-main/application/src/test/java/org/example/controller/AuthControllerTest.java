@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.security.jwt.JwtTokenUtil;
 import org.example.security.jwt.JwtUtils;
 import org.exemple.data.request.LoginRequest;
+import org.exemple.data.request.SignupRequest;
 import org.exemple.ports.api.UserServicePort;
 import org.exemple.service.EmailServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collections;
+import java.util.Set;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,7 +58,8 @@ class AuthControllerTest {
 
     private static ObjectMapper mapper = new ObjectMapper();
     private LoginRequest loginRequest;
-
+    private SignupRequest signupRequest;
+    private Set<String> role;
     @BeforeEach
     public void setup() {
         loginRequest = new LoginRequest("gloriamamahermosados", "12345678");
@@ -74,6 +80,17 @@ class AuthControllerTest {
     }
 
     @Test
-    void registerUser() {
+    void registerUser() throws Exception {
+        signupRequest = new SignupRequest( "prueba",
+                "prueba@yahoo.com.mx",
+                Collections.singleton("mod"),
+                "12345678"
+        );
+        mockMvc.perform(post("/api/auth/signup").contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .characterEncoding("utf-8")
+                        .content(String.valueOf(signupRequest))
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print());
+
     }
 }
