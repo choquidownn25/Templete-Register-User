@@ -4,11 +4,11 @@
     <mat-card>
       <mat-card-content>
         <div class="text-center pt-8 pb-16">
-          <img width="60px" src="assets/images/egret.png" alt="">
+         <!--  <img width="60px" src="assets/images/visa.png" alt=""> -->
           <p class="text-muted m-0">Sign in to your account</p>
         </div>
         <p *ngIf="errorMsg" class="text-center"><small class="text-red">{{errorMsg}}</small></p>
-    
+
         <div class="col-md-12">
           <div class="card card-container">
             <img
@@ -16,7 +16,7 @@
               src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
               class="profile-img-card"
             />
-           
+
             <form
             *ngIf="!isLoggedIn"
             name="form"
@@ -57,8 +57,8 @@
                 #password="ngModel"
               />
               </mat-form-field>
-              
-             
+
+
               <div
                 class="alert alert-danger"
                 role="alert"
@@ -68,9 +68,9 @@
                 <div *ngIf="password.errors?.['minlength']">
                   Password must be at least 6 characters
                 </div>
-                
+
               </div>
-      
+
             </div>
             <div mat-dialog-actions>
               <button mat-raised-button color="primary">
@@ -85,7 +85,7 @@
                 <br>
                 <span fxFlex></span>
                 <a [routerLink]="'/signup'"class="mat-primary text-center full-width">Create a new account</a>
-                
+
               </div>
             </div>
             <div class="form-group">
@@ -98,12 +98,12 @@
               </div>
             </div>
           </form>
-      
+
          <div class="alert alert-success" *ngIf="isLoggedIn">
             Logged in as {{ roles }}.
-            
+
           </div>
-           
+
           </div>
         </div>
 

@@ -24,7 +24,10 @@
     "@okta/okta-angular": "^5.2.0",
     "@okta/okta-auth-js": "^6.4.0",
     "@okta/okta-signin-widget": "^6.2.0",
+    "front-app": "file:",
+    "ngx-interactive-paycard": "^2.0.1",
     "rxjs": "~7.8.0",
+    "super-cc-card2": "^2.0.0",
     "sweetalert2": "^11.7.3",
     "tslib": "^2.3.0",
     "zone.js": "~0.12.0"

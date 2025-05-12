@@ -10,6 +10,7 @@ import { PersonaComponent } from './pages/persona/persona.component';
 import { EmpleadoComponent } from './pages/empleado/empleado.component';
 import { SigninComponent } from './pages/sessions/signin/signin.component';
 import { SignupComponent } from './pages/sessions/signup/signup.component';
+import { CardComponent } from './pages/card/card.component';
 
 const routes: Routes = [
   {
@@ -40,6 +41,14 @@ const routes: Routes = [
   {
     path: 'empleado',
     component: EmpleadoComponent,
+  },
+  {
+    path: 'card',
+    component: CardComponent,
+  },
+  {
+    path: 'card',
+    component: CardComponent,
   },
   {
     path: 'help',

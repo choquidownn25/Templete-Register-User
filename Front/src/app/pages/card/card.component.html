@@ -1,0 +1,14 @@
+<ngx-interactive-paycard
+    [chipImgPath]="'./assets/chip.png'"
+    [logoImgPath]= "logo"
+    [frontBgImgPath]="'./assets/SplitShire1.jpg'"
+    [backBgImgPath]="'./assets/SplitShire3.jpg'"
+    [cardNumberFormat]="cardNumberFormat"
+    [cardNumberMask]="cardNumberMask"
+    [cardLabels]="cardLabel"
+    [formLabels]="formLabel"
+    (submitEvent)="onSubmitEvent($event)"
+    (changeCard)="showChangesCard($event)"
+    (changeCardNumber)="showChangesCardNumber($event)"
+    >
+</ngx-interactive-paycard>

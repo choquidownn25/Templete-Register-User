@@ -49,11 +49,14 @@ import { EmpDeleteComponent } from './pages/empleado/emp-delete/emp-delete.compo
 import { EmpDetailComponent } from './pages/empleado/emp-detail/emp-detail.component';
 import { SignupComponent } from './pages/sessions/signup/signup.component';
 import { SigninComponent } from './pages/sessions/signin/signin.component';
+import { CardComponent } from './pages/card/card.component';
+import { InteractivePaycardModule } from 'ngx-interactive-paycard';
 
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, ProfileComponent, AboutComponent, HelpComponent, NotFoundComponent, ProductoComponent, EmpleadoComponent,AddComponent, EditComponent, DeleteComponent, PersonaComponent, AgregarComponent, EditarComponent, EliminarComponent, EmpAddEditComponent, EmpEditComponent, EmpDeleteComponent, EmpDetailComponent, SignupComponent, SigninComponent],
+  declarations: [AppComponent, HomeComponent, ProfileComponent, AboutComponent, HelpComponent, NotFoundComponent, ProductoComponent, EmpleadoComponent,AddComponent, EditComponent, DeleteComponent, PersonaComponent, AgregarComponent, EditarComponent, EliminarComponent, EmpAddEditComponent, EmpEditComponent, EmpDeleteComponent, EmpDetailComponent, SignupComponent, SigninComponent, CardComponent],
   imports: [
+    InteractivePaycardModule,
     MatNativeDateModule,
     MatRadioModule,
     MatSelectModule,
@@ -94,7 +97,7 @@ import { SigninComponent } from './pages/sessions/signin/signin.component';
     MatInputModule,
     MatRippleModule,
   ],
-  
+
   bootstrap: [AppComponent]
 })
 export class AppModule { }
