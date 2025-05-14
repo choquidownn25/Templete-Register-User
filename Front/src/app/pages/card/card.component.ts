@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import {
   CreditCard,
   CreditCardStyle,
 } from '../models copy/credit-card.interface';
 import { CardLabel, FormLabel } from 'ngx-interactive-paycard';
 import { compileClassMetadata } from '@angular/compiler';
+import { Tab2Component } from './tabs/tab2/tab2.component';
+import { Tab3Component } from './tabs/tab3/tab3.component';
+import { Tab4Component } from './tabs/tab4/tab4.component';
 
 @Component({
   selector: 'app-card',
@@ -12,6 +15,12 @@ import { compileClassMetadata } from '@angular/compiler';
   styleUrls: ['./card.component.css'],
 })
 export class CardComponent {
+  selectedIndex = 0;
+
+  @ViewChild('tab2Component') tab2Component!: Tab2Component;
+  @ViewChild('tab3Component') tab3Component!: Tab3Component;
+  @ViewChild('tab4Component') tab4Component!: Tab4Component;
+
   logo: string = './assets/logo.png';
   title = 'ngx-interactive-paycard-demo';
   cardNumberFormat = '#### #### #### ####';
@@ -36,6 +45,19 @@ export class CardComponent {
   };
 
   onSubmitEvent($event) {
+    console.log('Evento desde PayCard:', $event);
+
+    if (this.tab2Component?.form?.valid) {
+      console.log('Datos formulario Tab 2:', this.tab2Component.form.value);
+    }
+
+    if (this.tab3Component?.form?.valid) {
+      console.log('Datos formulario Tab 3:', this.tab3Component.form.value);
+    }
+
+    if (this.tab4Component?.form?.valid) {
+      console.log('Datos formulario Tab 4:', this.tab4Component.form.value);
+    }
     console.log('Envio de formulario');
     console.log($event);
   }
@@ -77,5 +99,13 @@ export class CardComponent {
       console.log('Número de tarjeta Cambio 2' + $event.cardNumber);
     }
     console.log($event);
+  }
+
+  onTabChange(index: number) {
+    this.selectedIndex = index;
+  }
+
+  onFormOpened(componentName: string) {
+    console.log(`Se ha abierto el componente: ${componentName}`);
   }
 }

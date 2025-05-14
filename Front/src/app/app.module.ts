@@ -34,7 +34,7 @@ import { PersonaService } from './pages/persona/service/persona.service';
 import { AgregarComponent } from './pages/persona/dialogs/agregar/agregar.component';
 import { EditarComponent } from './pages/persona/dialogs/editar/editar.component';
 import { MatCardModule } from '@angular/material/card';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { EliminarComponent } from './pages/persona/dialogs/eliminar/eliminar.component';
 
@@ -51,11 +51,48 @@ import { SignupComponent } from './pages/sessions/signup/signup.component';
 import { SigninComponent } from './pages/sessions/signin/signin.component';
 import { CardComponent } from './pages/card/card.component';
 import { InteractivePaycardModule } from 'ngx-interactive-paycard';
-
+// Importa MatTabsModule
+import { MatTabsModule } from '@angular/material/tabs';
+import { TabsComponent } from './pages/card/tabs/tabs/tabs.component';
+import { Tab1Component } from './pages/card/tabs/tab1/tab1.component';
+import { Tab2Component } from './pages/card/tabs/tab2/tab2.component';
+import { Tab3Component } from './pages/card/tabs/tab3/tab3.component';
+import { Tab4Component } from './pages/card/tabs/tab4/tab4.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, ProfileComponent, AboutComponent, HelpComponent, NotFoundComponent, ProductoComponent, EmpleadoComponent,AddComponent, EditComponent, DeleteComponent, PersonaComponent, AgregarComponent, EditarComponent, EliminarComponent, EmpAddEditComponent, EmpEditComponent, EmpDeleteComponent, EmpDetailComponent, SignupComponent, SigninComponent, CardComponent],
+  declarations: [
+    AppComponent,
+    HomeComponent,
+    ProfileComponent,
+    AboutComponent,
+    HelpComponent,
+    NotFoundComponent,
+    ProductoComponent,
+    EmpleadoComponent,
+    AddComponent,
+    EditComponent,
+    DeleteComponent,
+    PersonaComponent,
+    AgregarComponent,
+    EditarComponent,
+    EliminarComponent,
+    EmpAddEditComponent,
+    EmpEditComponent,
+    EmpDeleteComponent,
+    EmpDetailComponent,
+    SignupComponent,
+    SigninComponent,
+    CardComponent,
+    TabsComponent,
+    Tab1Component,
+    Tab2Component,
+    Tab3Component,
+    Tab4Component,
+  ],
   imports: [
+    BrowserAnimationsModule, // ¡Importante!
+    MatTabsModule, // <- Este es el módulo clave para mat-tab
+    MatTableModule,
     InteractivePaycardModule,
     MatNativeDateModule,
     MatRadioModule,
@@ -85,12 +122,9 @@ import { InteractivePaycardModule } from 'ngx-interactive-paycard';
     MatDatepickerModule,
     MatCheckboxModule,
     ReactiveFormsModule,
-    MatProgressBarModule
+    MatProgressBarModule,
   ],
- providers: [
-  ProductoService,
-  PersonaService
-  ],
+  providers: [ProductoService, PersonaService],
   exports: [
     MatButtonModule,
     MatFormFieldModule,
@@ -98,6 +132,6 @@ import { InteractivePaycardModule } from 'ngx-interactive-paycard';
     MatRippleModule,
   ],
 
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -98,3 +98,26 @@ main {
     }
   }
 }
+.custom-tabview .p-tabview-nav .p-highlight {
+  background-color: blue !important;
+  color: white !important;
+}
+::ng-deep .mat-tab-group.custom-tab-group .mat-tab-label.mat-tab-label-active {
+  background-color: #1976d2; /* Azul Material Design */
+  color: white;
+  border-radius: 4px 4px 0 0;
+}
+
+::ng-deep .mat-tab-group.custom-tab-group .mat-tab-label {
+  transition: background-color 0.3s;
+}
+::ng-deep .mat-tab-label.mat-tab-label-active {
+  color: blue !important;
+}
+::ng-deep .mat-tab-group.custom-tab-group .mat-tab-label:hover {
+  background-color: #1976d2; /* Azul Material Design */
+  color: white;
+}
+::ng-deep .mat-tab-label.mat-tab-label-active {
+  color: blue !important;
+}
